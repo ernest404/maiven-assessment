@@ -1,4 +1,4 @@
-import { Pool } from "@/node_modules/@types/pg";
+import { Pool } from "pg";
 
 const globalForPg = globalThis as unknown as { pool?: Pool };
 
