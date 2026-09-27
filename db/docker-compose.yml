@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    environment:
+      POSTGRES_USER: maiven
+      POSTGRES_PASSWORD: maiven
+      POSTGRES_DB: regulations
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+
+volumes:
+  pgdata:
