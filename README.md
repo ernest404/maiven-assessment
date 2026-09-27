@@ -98,3 +98,16 @@ pytest -v
 | `q`    | string | Case-insensitive search on title/abstract |
 
 Returns `{ documents, page, hasMore }`.
+
+## What I'd do differently with more time
+
+**Ingest** — Run the ingest on a schedule (e.g. cron-job) so new rules appear automatically.
+Persist ingest_runs (cursor, counts, errors). Fetch only what is newer than the last successful watermark. Add retries with exponential backoff for API failures and use `httpx` with async for faster fetching across different pages.
+
+**Database** —  Keep current state on documents, and a document_versions table on (document_number, content_hash) so corrections are visible. Add connection pooling (PgBouncer) for the web app under load. Replace `ILIKE` with Postgres full-text search (`tsvector`/`tsquery`) for faster, ranked results as the dataset grows
+
+**API** — Add rate limiting, request validation, and proper error responses with consistent error codes. Paginate with cursor-based pagination instead of offset for stable results. 
+
+**Frontend** — Add loading skeletons, error states with retry, and URL-synced filters so searches are shareable. Add end-to-end tests.
+
+**Infrastructure** — Containerise the ingest and web app (Dockerfiles), add a single `docker-compose.yml` at the root to run the full stack, set up CI with GitHub Actions for linting and tests, and manage secrets through environment variables in the deployment platform.
